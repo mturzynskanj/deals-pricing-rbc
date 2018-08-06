@@ -9,10 +9,10 @@ class Deals extends React.Component {
     constructor(props) {
         super(props)
     }
-    getDeals = () => Object.values(this.props.dealsPerId);
+    getDeals = () => Object.values(this.props.dealsById);
 
     getPricingPerDeal = () => this.getDeals().map(deal => {
-        return <DealsList key={deal.dealId} deal={deal} pricingPerDeal={deal.pricingIds} pricingIds={this.props.pricingIds} pricingItems={this.props.pricingItems} pricingPerId={this.props.pricingPerId} />
+        return <DealsList key={deal.dealId} deal={deal} pricingPerDeal={deal.pricingIds} pricingIds={this.props.pricingIds} pricingItems={this.props.pricingItems} pricingItemsById={this.props.pricingItemsById} />
     });
 
     render() {
@@ -38,10 +38,10 @@ class Deals extends React.Component {
 const mapStateToProps = (state) => {
     return {
         dealsIds: state.dealsIds,
-        dealsPerId: state.dealsPerId,
-        pricingIds: state.pricingIds,
+        dealsById: state.dealsById,
+        pricingItemIds: state.pricingItemIds,
         pricingItems: state.pricingItems,
-        pricingPerId: state.pricingPerId
+        pricingItemsById: state.pricingItemsById
     }
 };
 

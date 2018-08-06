@@ -5,7 +5,7 @@ export const ADD_DEAL_PRICING = 'ADD_DEAL_PRICING';
 
 const initialState = {
     dealIds: [1, 2],
-    dealsPerId: {
+    dealsById: {
         1: {
             dealId: 1,
             dealName: 'deal-1',
@@ -51,7 +51,7 @@ const initialState = {
         },
     ],
 
-    pricingPerId: {
+    pricingItemsById: {
         1: {
             pricingId: 1,
             pricingName: 'pricing1',
@@ -204,78 +204,80 @@ export default function reducer(state = initialState, action) {
             const existingDeal = findInArray(state.dealIds)(dealId);
             const existingPricing = findInArray(state.pricingIds)(pricingId)
 
-            let pricingIds;
+            let pricingItemIds;
             let pricingItems;
-            let pricingPerId;
-            let dealsPerId;
+            //let pricingPerId;
+            let pricingItemsById;
+            //let dealsPerId;
+            let dealsById;
             let dealIds;
 
             if (!existingPricing) {
                 //case we are adding new pricing 
-                pricingIds = state.pricingIds.concat(pricingId);
+                pricingItemIds = state.pricingIds.concat(pricingId);
                 pricingItems = state.pricingItems.concat(pricingItem)
-                pricingPerId = { ...state.pricingPerId, [pricingId]: pricingItem }
+                pricingItemsById = { ...state.pricingItemsById, [pricingId]: pricingItem }
 
                 if (existingDeal) {
-                    dealInfo = { ...dealInfo, pricingIds: state.dealsPerId[dealId].pricingIds.concat(pricingId) }
-                    dealsPerId = { ...state.dealsPerId, ...{ [dealId]: dealInfo } }
+                    dealInfo = { ...dealInfo, pricingIds: state.dealsById[dealId].pricingIds.concat(pricingId) }
+                    dealsById = { ...state.dealsById, ...{ [dealId]: dealInfo } }
                     dealIds = state.dealIds
                 } else {
                     dealIds = state.dealIds.concat([dealId])
                     dealInfo = { ...dealInfo, pricingIds: [].concat(pricingId) };
-                    dealsPerId = { ...state.dealsPerId, ...{ [dealId]: dealInfo } }
-                    dealsPerId = dealsPerId = { ...state.dealsPerId, ...{ [dealId]: dealInfo } }
+                    dealsById = { ...state.dealsById, ...{ [dealId]: dealInfo } }
+                    dealsById = dealsById = { ...state.dealsById, ...{ [dealId]: dealInfo } }
                 }
 
                 return {
                     ...state,
-                    pricingIds,
+                    pricingItemIds,
                     pricingItems,
-                    pricingPerId,
-                    dealsPerId,
+                    pricingItemsById,
+                    dealsById,
                     dealIds
                 }
 
             } else {
                 // existing pricing 
-                let existingPricingDetails = state.pricingPerId[pricingId];
+                let existingPricingDetails = state.pricingItemsById[pricingId];
                 let exisitingDealId = existingPricingDetails.dealId;
 
                 if (exisitingDealId !== dealId) {
                     //case we are relocating princing from one deal to another
-                    dealsPerId = {
-                        ...state.dealsPerId,
-                        [exisitingDealId]: { ...state.dealsPerId[exisitingDealId], pricingIds: removeFromArray(state.dealsPerId[exisitingDealId].pricingIds)(pricingId) },
+                    dealsById = {
+                        ...state.dealsById,
+                        [exisitingDealId]: { ...state.dealsById[exisitingDealId], pricingIds: removeFromArray(state.dealsById[exisitingDealId].pricingIds)(pricingId) },
                         [dealId]: {
-                            ...state.dealsPerId[dealId], ...dealInfo, pricingIds: addToArray(state.dealsPerId[dealId].pricingIds)(pricingId)
+                            ...state.dealsById[dealId], ...dealInfo, pricingIds: addToArray(state.dealsById[dealId].pricingIds)(pricingId)
                         }
                     }
 
-                    pricingPerId = {
-                        ...state.pricingPerId,
-                        [pricingId]: { ...state.pricingPerId[pricingId], ...pricingItem }
+                    pricingItemsById = {
+                        ...state.pricingItemsById,
+                        [pricingId]: { ...state.pricingItemsById[pricingId], ...pricingItem }
                     }
 
                     pricingItems = updateArrayOfObjects(state.pricingItems)(pricingItem)
 
                 } else {
                     ///updateing existing deal and pricing ...
-                    dealsPerId = {
-                        ...state.dealsPerId,
-                        [dealId]: { ...state.dealsPerId[dealId], ...dealInfo }
+                    dealsById = {
+                        ...state.dealsById,
+                        [dealId]: { ...state.dealsById[dealId], ...dealInfo }
                     }
 
-                    pricingPerId = {
-                        ...state.pricingPerId,
-                        [pricingId]: { ...state.pricingPerId[pricingId], ...pricingItem }
+                    pricingItemsById = {
+                        ...state.pricingItemsById,
+                        [pricingId]: { ...state.pricingItemsById[pricingId], ...pricingItem }
                     }
 
                     pricingItems = updateArrayOfObjects(state.pricingItems)(pricingItem)
                 }
                 return {
                     ...state,
-                    dealsPerId,
-                    pricingPerId,
+                    dealsById,
+                    pricingItemsById,
                     pricingItems,
                 }
             }

@@ -7,7 +7,7 @@ const DealsList = (props) => {
                 <ul>
                     {
                         props.pricingPerDeal.map(id => {
-                            const currentPricing = props.pricingPerId[id];
+                            const currentPricing = props.pricingItemsById[id];
                             return <p key={id}>{currentPricing.pricingName} -- {currentPricing.pricingId}</p>
                         })
                     }
