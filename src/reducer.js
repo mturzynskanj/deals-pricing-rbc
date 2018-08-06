@@ -169,7 +169,7 @@ export const findInArray = (arr) => (item) => arr.find(el => {
 export const addToArray = (arr) => (item) => arr.concat(item);
 export const removeFromArray = (arr) => (item) => {
     let idx = arr.indexOf(item);
-    if(idx !== -1){
+    if (idx !== -1) {
         let newArray = [...arr.slice(0, idx), ...arr.slice(idx + 1)]
     }
     let newArray = [...arr.slice(0, idx), ...arr.slice(idx + 1)]
@@ -196,7 +196,9 @@ export default function reducer(state = initialState, action) {
         case RELOCATE_PRICING_TO_ANOTHER_DEAL:
         case ADD_NEW_DEAL_AND_PRICING:
         case ADD_NEW_PRICING_TO_EXITING_DEAL:
+        debugger;
             let { pricingItems: pricingFromPayload, ...dealInfo } = payload;
+            console.log('dealInfo',dealInfo);
             let { dealId } = dealInfo;
             const { pricingId, dealId: dealInsidePricing } = pricingFromPayload[0];
             const pricingItem = pricingFromPayload[0];
@@ -214,19 +216,25 @@ export default function reducer(state = initialState, action) {
 
             if (!existingPricing) {
                 //case we are adding new pricing 
-                pricingItemIds = state.pricingIds.concat(pricingId);
-                pricingItems = state.pricingItems.concat(pricingItem)
+                //pricingItemIds = state.pricingIds.concat(pricingId);
+                pricingItemIds = addToArray(state.pricingIds)(pricingId)
+                // pricingItems = state.pricingItems.concat(pricingItem)
+                pricingItems = addToArray(state.pricingItems)(pricingItem)
                 pricingItemsById = { ...state.pricingItemsById, [pricingId]: pricingItem }
 
                 if (existingDeal) {
+                    //dealInfo = { ...dealInfo, pricingIds: state.dealsById[dealId].pricingIds.concat(pricingId) }
                     dealInfo = { ...dealInfo, pricingIds: state.dealsById[dealId].pricingIds.concat(pricingId) }
+
+                    
+
                     dealsById = { ...state.dealsById, ...{ [dealId]: dealInfo } }
                     dealIds = state.dealIds
                 } else {
                     dealIds = state.dealIds.concat([dealId])
                     dealInfo = { ...dealInfo, pricingIds: [].concat(pricingId) };
                     dealsById = { ...state.dealsById, ...{ [dealId]: dealInfo } }
-                    dealsById = dealsById = { ...state.dealsById, ...{ [dealId]: dealInfo } }
+                    //dealsById = dealsById = { ...state.dealsById, ...{ [dealId]: dealInfo } }
                 }
 
                 return {
@@ -247,7 +255,9 @@ export default function reducer(state = initialState, action) {
                     //case we are relocating princing from one deal to another
                     dealsById = {
                         ...state.dealsById,
-                        [exisitingDealId]: { ...state.dealsById[exisitingDealId], pricingIds: removeFromArray(state.dealsById[exisitingDealId].pricingIds)(pricingId) },
+                        [exisitingDealId]: { 
+                            ...state.dealsById[exisitingDealId],
+                             pricingIds: removeFromArray(state.dealsById[exisitingDealId].pricingIds)(pricingId) },
                         [dealId]: {
                             ...state.dealsById[dealId], ...dealInfo, pricingIds: addToArray(state.dealsById[dealId].pricingIds)(pricingId)
                         }
@@ -281,7 +291,7 @@ export default function reducer(state = initialState, action) {
                     pricingItems,
                 }
             }
-            default:
+        default:
             return state;
     }  //end of switch 
     return state;
